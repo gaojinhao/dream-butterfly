@@ -3,7 +3,7 @@
     <div v-if="loading" class="loading">加载中...</div>
     <div v-else-if="video" class="video-content">
       <div class="video-player">
-        <video :src="video.video_url" controls poster="video.thumbnail_url"></video>
+        <video :src="video.video_url" controls :poster="video.thumbnail_url"></video>
       </div>
       <div class="video-info">
         <h1>{{ video.title }}</h1>

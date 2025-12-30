@@ -21,7 +21,7 @@
         </div>
         <div v-if="passwordMismatch" class="error-message">两次输入的密码不一致</div>
         <div v-if="authStore.error" class="error-message">{{ authStore.error }}</div>
-        <button type="submit" :disabled="authStore.loading || passwordMismatch" class="submit-btn">
+        <button type="submit" :disabled="authStore.loading || !!passwordMismatch" class="submit-btn">
           {{ authStore.loading ? '注册中...' : '注册' }}
         </button>
       </form>
