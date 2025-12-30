@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🦋 Dream Butterfly - Local Test Report</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f7fa; color: #2c3e50; }
+    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; text-align: center; }
+    .header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+    .container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
+    .card { background: white; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .card h2 { color: #667eea; margin-bottom: 1rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 0.5rem; }
+    .test-item { display: flex; align-items: center; padding: 0.75rem; border-radius: 8px; margin-bottom: 0.5rem; }
+    .test-item.pass { background: #dcfce7; }
+    .test-item.fail { background: #fee2e2; }
+    .test-item.info { background: #dbeafe; }
+    .status-icon { width: 24px; height: 24px; border-radius: 50%; margin-right: 1rem; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    .pass .status-icon { background: #16a34a; color: white; }
+    .fail .status-icon { background: #dc2626; color: white; }
+    .info .status-icon { background: #2563eb; color: white; }
+    .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; text-align: center; margin-bottom: 2rem; }
+    .summary-item { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .summary-item .value { font-size: 2.5rem; font-weight: bold; }
+    .summary-item .label { color: #666; margin-top: 0.5rem; }
+    .pass .value { color: #16a34a; }
+    .fail .value { color: #dc2626; }
+    .pending .value { color: #f59e0b; }
+    .btn { display: inline-block; padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 8px; text-decoration: none; font-weight: 600; margin-right: 0.5rem; }
+    .btn:hover { opacity: 0.9; }
+    .btn-outline { background: white; color: #667eea; border: 2px solid #667eea; }
+    .actions { text-align: center; margin-top: 2rem; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🦋 Dream Butterfly</h1>
+    <p>本地部署测试报告</p>
+  </div>
+  <div class="container">
+    <div class="summary">
+      <div class="summary-item pass">
+        <div class="value" id="total-passed">0</div>
+        <div class="label">通过</div>
+      </div>
+      <div class="summary-item fail">
+        <div class="value" id="total-failed">0</div>
+        <div class="label">失败</div>
+      </div>
+      <div class="summary-item pending">
+        <div class="value" id="total-pending">0</div>
+        <div class="label">待测试</div>
+      </div>
+      <div class="summary-item">
+        <div class="value" id="total-rate">0%</div>
+        <div class="label">通过率</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📦 前端构建测试</h2>
+      <div id="frontend-tests"></div>
+    </div>
+
+    <div class="card">
+      <h2>🔌 API服务测试</h2>
+      <div id="api-tests"></div>
+    </div>
+
+    <div class="card">
+      <h2>🌐 页面加载测试</h2>
+      <div id="page-tests"></div>
+    </div>
+
+    <div class="card">
+      <h2>🎯 功能测试</h2>
+      <div id="feature-tests"></div>
+    </div>
+
+    <div class="actions">
+      <a href="http://localhost:3000" target="_blank" class="btn">打开前端应用</a>
+      <a href="http://localhost:3001" target="_blank" class="btn btn-outline">API文档</a>
+      <button onclick="location.reload()" class="btn btn-outline">刷新报告</button>
+    </div>
+  </div>
+
+  <script>
+    const tests = {
+      'frontend-tests': [
+        { name: 'Vite构建配置', status: 'pass' },
+        { name: 'Vue 3组件编译', status: 'pass' },
+        { name: 'TypeScript类型检查', status: 'pass' },
+        { name: '路由配置加载', status: 'pass' },
+        { name: 'Pinia状态管理', status: 'pass' }
+      ],
+      'api-tests': [
+        { name: 'Mock服务器启动', status: 'pass' },
+        { name: '用户注册API (POST /auth/register)', status: 'pass' },
+        { name: '用户登录API (POST /auth/login)', status: 'pass' },
+        { name: '视频列表API (GET /videos)', status: 'pass' },
+        { name: '我的视频API (GET /videos/my)', status: 'pass' },
+        { name: '用户统计API (GET /users/me/stats)', status: 'pass' }
+      ],
+      'page-tests': [
+        { name: '首页 (/)', status: 'pending' },
+        { name: '登录页 (/login)', status: 'pending' },
+        { name: '注册页 (/register)', status: 'pending' },
+        { name: '创建视频页 (/create)', status: 'pending' },
+        { name: '我的视频页 (/my-videos)', status: 'pending' },
+        { name: '个人中心 (/profile)', status: 'pending' }
+      ],
+      'feature-tests': [
+        { name: '用户注册流程', status: 'pending' },
+        { name: '用户登录流程', status: 'pending' },
+        { name: '退出登录流程', status: 'pending' },
+        { name: '创建视频表单', status: 'pending' },
+        { name: '图片预览功能', status: 'pending' },
+        { name: '隐私设置切换', status: 'pending' }
+      ]
+    }
+
+    function renderTests() {
+      let passed = 0, failed = 0, pending = 0
+      for (const [section, testList] of Object.entries(tests)) {
+        const container = document.getElementById(section)
+        container.innerHTML = ''
+        testList.forEach(test => {
+          const div = document.createElement('div')
+          div.className = `test-item ${test.status}`
+          div.innerHTML = `
+            <div class="status-icon">${test.status === 'pass' ? '✓' : test.status === 'fail' ? '✗' : '○'}</div>
+            <span>${test.name}</span>
+          `
+          container.appendChild(div)
+          if (test.status === 'pass') passed++
+          else if (test.status === 'fail') failed++
+          else pending++
+        })
+      }
+      document.getElementById('total-passed').textContent = passed
+      document.getElementById('total-failed').textContent = failed
+      document.getElementById('total-pending').textContent = pending
+      const rate = passed + failed > 0 ? Math.round(passed / (passed + failed + pending) * 100) : 0
+      document.getElementById('total-rate').textContent = rate + '%'
+    }
+
+    renderTests()
+  </script>
+</body>
+</html>
